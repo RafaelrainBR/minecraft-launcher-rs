@@ -13,6 +13,7 @@ pub enum Error {
     ClientDownloadNotFound(String),
     RuntimeNotFound(String),
     TokioError(tokio::task::JoinError),
+    UnsupportedPlatform(String),
 }
 
 impl From<reqwest::Error> for Error {

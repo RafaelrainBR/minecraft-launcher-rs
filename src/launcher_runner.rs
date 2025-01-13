@@ -1,5 +1,4 @@
-use tokio::io::copy;
-use tokio::io::{AsyncBufReadExt, BufReader};
+use tokio::io::AsyncBufReadExt;
 use tokio::process::Command;
 
 use crate::{
@@ -142,7 +141,6 @@ fn build_minecraft_arguments(
     mojang_version: &MojangVersion,
     launcher_config: &LauncherConfig,
 ) -> Vec<String> {
-    // get from mojang_version.minecraft_arguments or mojang_version.arguments. Both are Option. Select the one that is Some
     let arguments = mojang_version
         .arguments
         .as_ref()
@@ -155,20 +153,6 @@ fn build_minecraft_arguments(
                 .unwrap_or_default()
         });
 
-    /*
-    for each argument, try to replace, like i did in kotlin:
-            var replacedArguments =
-        versionData.minecraftArguments
-            .replace("\${auth_player_name}", username)
-            .replace("\${version_name}", versionData.versionId)
-            .replace("\${game_directory}", gameFolders.gameDir)
-            .replace("\${assets_root}", gameFolders.assetsDir)
-            .replace("\${assets_index_name}", versionData.assetIndexId)
-            .replace("\${auth_uuid}", "abcde")
-            .replace("\${auth_access_token}", "token")
-            .replace("\${user_type}", "msa")
-            .replace("\${user_properties}", "{}")
-     */
     arguments
         .iter()
         .map(|argument| {

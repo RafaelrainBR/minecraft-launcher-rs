@@ -1,14 +1,10 @@
-use std::{
-    io::Cursor,
-    path::{Path, PathBuf},
-};
+use std::{io::Cursor, path::PathBuf};
 
 use crate::{
     files::{load_file_or_download, load_file_or_download_serialized},
     launcher_paths::LauncherPaths,
-    launcher_runner::launch_game,
     model::mojang::{
-        self, MojangAssetIndexFile, MojangVersion, MojangVersionArtifactKey,
+        MojangAssetIndexFile, MojangVersion, MojangVersionArtifactKey,
         MojangVersionManifestVersion, RuntimeIndex, RuntimeManifest, VersionLibrary,
     },
     platform::PlatformData,
@@ -83,7 +79,7 @@ impl LauncherVersion {
         mojang_version: &MojangVersion,
         version_id: &str,
     ) -> Result<()> {
-        let client_file_path = launcher_paths.build_client_file_path(version_id.clone());
+        let client_file_path = launcher_paths.build_client_file_path(version_id);
 
         let download_url = mojang_version
             .downloads

@@ -136,10 +136,16 @@ impl MojangVersionLibrary {
     pub fn into_version_library(&self, platform_data: &PlatformData) -> Result<VersionLibrary> {
         let native_id = platform_data.platform_type.native_id();
 
+        let arch_as_string = match &platform_data.arch {
+            crate::platform::Arch::X86 => "32",
+            crate::platform::Arch::X86_64 => "64",
+            _ => "",
+        };
+
         let native_classifier_name = match self.natives.clone() {
             Some(natives) => natives
                 .get(&native_id)
-                .map(|classifier| classifier.replace("${arch}", &platform_data.arch)),
+                .map(|classifier| classifier.replace("${arch}", &arch_as_string)),
             None => None,
         };
 

@@ -2,7 +2,7 @@ use crate::{
     config::LauncherConfig,
     files::load_file_or_download_serialized,
     launcher_runner::launch_game,
-    launcher_version::{self, LauncherVersion},
+    launcher_version::LauncherVersion,
     model::{
         mojang::{MojangVersionManifest, MojangVersionManifestVersion},
         VersionType,

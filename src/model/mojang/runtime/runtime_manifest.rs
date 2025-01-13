@@ -55,7 +55,6 @@ impl RuntimeManifest {
     }
 
     fn join_runtime_paths(&self, base_path: String, file_name: String) -> String {
-        // if the file_name contains /, split and join in the path
         if file_name.contains("/") {
             let path_parts = file_name.split("/").collect::<Vec<&str>>();
 

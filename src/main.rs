@@ -46,10 +46,11 @@ async fn main() {
 }
 
 pub fn load_platform_data() -> PlatformData {
-    PlatformData {
-        platform_type: PlatformType::Windows,
-        arch: "64".to_string(),
-    }
+    let platform = PlatformData::new().unwrap();
+
+    println!("Platform: {:?}", &platform);
+
+    platform
 }
 
 pub fn get_launcher_data_location() -> String {

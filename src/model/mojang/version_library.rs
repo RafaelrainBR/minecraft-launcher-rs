@@ -1,5 +1,3 @@
-use std::path::Path;
-
 use crate::launcher_paths::join_paths;
 
 #[derive(Debug, Clone)]
@@ -31,7 +29,6 @@ impl VersionLibrary {
     fn extract_path_from_url(url: &str) -> String {
         let mut path_parts: Vec<&str> = url.split('/').skip(3).collect();
 
-        // use joinPaths
         join_paths(path_parts.remove(0).to_owned(), path_parts).to_string()
     }
 }

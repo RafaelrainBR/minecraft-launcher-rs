@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use serde::{Deserialize, Serialize};
 
-use crate::platform::{PlatformData, PlatformType};
+use crate::platform::{Arch, PlatformData, PlatformType};
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct RuntimeIndex {
@@ -53,33 +53,23 @@ impl RuntimeIndex {
         platform_data: &PlatformData,
         version_runtime_name: String,
     ) -> Option<RuntimeEntryManifest> {
-        let arch = platform_data.arch.clone();
+        let arch = &platform_data.arch;
         let entry = match platform_data.platform_type {
-            PlatformType::Windows => {
-                if arch.contains("86") {
-                    &self.windows_x86
-                } else if arch == "arm64" {
-                    &self.windows_arm64
-                } else if arch == "64" {
-                    &self.windows_x64
-                } else {
-                    return None;
-                }
-            }
-            PlatformType::Linux => {
-                if arch.contains("i386") {
-                    &self.linux_i386
-                } else {
-                    &self.linux
-                }
-            }
-            PlatformType::MacOs => {
-                if arch.contains("arm64") {
-                    &self.mac_os_arm64
-                } else {
-                    &self.mac_os
-                }
-            }
+            PlatformType::Windows => match arch {
+                Arch::X86 => &self.windows_x86,
+                Arch::X86_64 => &self.windows_x64,
+                Arch::Arm => &self.windows_arm64,
+                Arch::Aarch64 => return None,
+            },
+            PlatformType::Linux => match arch {
+                Arch::X86 => &self.linux_i386,
+                _ => &self.linux,
+            },
+            PlatformType::MacOs => match arch {
+                Arch::Arm => &self.mac_os_arm64,
+                Arch::Aarch64 => &self.mac_os_arm64,
+                _ => &self.mac_os,
+            },
         };
 
         let first_runtime_entry = entry.get(version_runtime_name.as_str())?.get(0).cloned()?;

@@ -67,12 +67,6 @@ impl MojangVersionArguments {
                                     continue;
                                 }
                             }
-
-                            if let Some(arch) = &os.arch {
-                                if !platform_data.arch.contains(arch) {
-                                    continue;
-                                }
-                            }
                         }
 
                         match &rule_based_value.value {
