@@ -1,5 +1,7 @@
 use std::{io::Cursor, path::PathBuf};
 
+use futures::StreamExt;
+
 use crate::{
     files::{load_file_or_download, load_file_or_download_serialized},
     launcher_paths::LauncherPaths,
@@ -143,14 +145,20 @@ impl LauncherVersion {
         asset_index: &MojangAssetIndexFile,
         launcher_paths: &LauncherPaths,
     ) -> Result<()> {
-        for object in asset_index.objects.values() {
+        let futures = asset_index.objects.values().map(|object| async move {
             let assets_objects_base_folder =
                 launcher_paths.get_path(crate::LauncherPath::AssetsObjects);
             let file_path = object.build_file_path(&assets_objects_base_folder);
             let download_url = object.build_download_url(ASSET_INDEX_OBJECT_DOWNLOAD_BASE_URL);
 
-            let _ = load_file_or_download(file_path, download_url).await?;
-        }
+            let _ = load_file_or_download(file_path, download_url)
+                .await
+                .unwrap();
+        });
+
+        let stream = futures::stream::iter(futures).buffer_unordered(10);
+
+        let _ = stream.collect::<Vec<_>>().await;
 
         Ok(())
     }
@@ -211,7 +219,6 @@ impl LauncherVersion {
             .download(launcher_paths.build_runtime_path(&runtime_name))
             .await?;
 
-        println!("{:?}", runtime_manifest_content);
         Ok(())
     }
 }
