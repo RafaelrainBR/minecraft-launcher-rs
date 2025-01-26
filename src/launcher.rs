@@ -14,6 +14,7 @@ use crate::{
 const VERSION_MANIFEST_V2_URL: &str =
     "https://piston-meta.mojang.com/mc/game/version_manifest_v2.json";
 
+#[derive(Debug)]
 pub struct Launcher {
     pub platform_data: PlatformData,
     pub launcher_paths: LauncherPaths,

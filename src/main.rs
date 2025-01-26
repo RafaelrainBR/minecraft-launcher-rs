@@ -4,11 +4,12 @@ pub use crate::error::Error;
 use config::LauncherConfig;
 use launcher::Launcher;
 pub use launcher_paths::{LauncherPath, LauncherPaths};
-use platform::{PlatformData, PlatformType};
+use platform::PlatformData;
 
 mod config;
 mod error;
 mod files;
+mod gui;
 mod http_client;
 mod launcher;
 mod launcher_paths;
@@ -23,16 +24,20 @@ type Result<T> = std::result::Result<T, Error>;
 async fn main() {
     println!("Hello, world!");
 
-    let args: Vec<String> = env::args().collect();
+    let launcher = create_launcher().await;
 
+    gui::display_gui(launcher).unwrap();
+
+    // start_game_from_cli().await;
+    ()
+}
+
+async fn start_game_from_cli() {
+    let args: Vec<String> = env::args().collect();
     let version_id = args.get(1).cloned().expect("Informe uma versao");
     println!("Version ID: {:?}", version_id);
 
-    let data_location = get_launcher_data_location();
-    let launcher_paths = create_launcher_paths(data_location);
-
-    let platform_data = load_platform_data();
-    let mut launcher = start_launcher(platform_data, launcher_paths.clone()).await;
+    let mut launcher = create_launcher().await;
 
     let selected_version = launcher.select_version(version_id).unwrap();
     launcher.start_downloads().await.unwrap();
@@ -43,6 +48,16 @@ async fn main() {
 
     launcher.persist_config().await.unwrap();
     ()
+}
+
+async fn create_launcher() -> Launcher {
+    let data_location = get_launcher_data_location();
+    let launcher_paths = create_launcher_paths(data_location);
+
+    let platform_data = load_platform_data();
+    let launcher = start_launcher(platform_data, launcher_paths.clone()).await;
+
+    launcher
 }
 
 pub fn load_platform_data() -> PlatformData {
